@@ -1,3 +1,125 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ChromaPath</title>
-<style>body{font:16px/1.55 system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 20px;color:#1a1a1e}</style></head><body>
-<h1>ChromaPath</h1><p>Connect the pairs. Fill every square. The boards keep growing.</p><p>Help: <a href="mailto:support@psyche.you">support@psyche.you</a> · <a href="privacy.html">Privacy policy</a></p></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChromaPath: Connect the Pairs</title>
+<meta name="description" content="Connect the pairs. Fill every square. 1000 boards, growing up to 14×16. Coming to iPhone and Android.">
+<!-- Smart App Banner: Safari on iPhone shows "Get" / "Open" at the top once the app is live. -->
+<meta name="apple-itunes-app" content="app-id=6830501249">
+<meta property="og:title" content="ChromaPath: Connect the Pairs">
+<meta property="og:description" content="Connect the pairs. Fill every square. 1000 boards, growing up to 14×16.">
+<meta property="og:image" content="https://psyche-pbc.github.io/chromapath-site/img/og.jpg">
+<meta property="og:url" content="https://psyche-pbc.github.io/chromapath-site/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--cell:#F1F3F8;--ink:#1A1A2E;--dim:#646980;--line:#DFE3EC;--red:#F2323F}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.5 Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+main{max-width:460px;margin:0 auto;padding:28px 20px 24px;text-align:center}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.brand img{width:36px;height:36px;border-radius:9px}
+h1{font-size:clamp(34px,9vw,46px);line-height:1;font-weight:900;letter-spacing:-.02em;margin:22px 0 24px}
+h1 span{color:var(--red)}
+svg.board{display:block;width:100%;height:auto;border-radius:12px;margin:28px 0 8px}
+.stores{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.store{display:flex;align-items:center;justify-content:center;gap:12px;background:#000;color:#fff;text-decoration:none;border-radius:16px;padding:12px 14px;min-height:68px;text-align:left;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)}
+.store svg{width:30px;height:30px;flex:none}
+.store small{display:block;font-size:12px;line-height:1.1;opacity:.75}
+.store strong{display:block;font-size:21px;line-height:1.15;font-weight:800;white-space:nowrap}
+.store.soon{cursor:default}
+@media (max-width:360px){.stores{grid-template-columns:1fr}}
+.note{font-size:14px;color:var(--dim);margin:10px 0 0}
+footer{text-align:center;color:var(--dim);font-size:14px;padding:24px 20px 36px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><img src="img/icon.png" alt="">ChromaPath</div>
+  <h1>Connect the pairs.<br><span>Fill every square.</span></h1>
+  <div class="stores" data-stores></div>
+  <p class="note" data-store-note></p>
+
+  <svg class="board" id="board" role="img" aria-label="A 5×5 ChromaPath board solving itself"></svg>
+</main>
+<footer>
+  <span>© 2026 Psyche Project PBC</span>
+  <a href="mailto:support@psyche.you">support@psyche.you</a>
+  <a href="privacy.html">Privacy policy</a>
+</footer>
+
+<script>
+/* STORES. Flip `live` to true the day each store has the app. Until then the
+   button says "Coming soon": Apple only allows its badge for an app that is on
+   the App Store. `ref` in the page URL rides along to Play as the referrer. */
+const STORES = {
+  ios: { live: false, url: "https://apps.apple.com/app/id6830501249", top: "Download on the", name: "App Store",
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.65.8-3.33.8-.7 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.2 1.1-.04 1.52-.71 2.86-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.2-2.48-.03-.01-2.3-.88-2.33-3.5zM14.2 6.13c.6-.74 1.01-1.75.9-2.77-.87.04-1.94.58-2.56 1.31-.56.65-1.05 1.69-.92 2.69.97.07 1.97-.49 2.58-1.23z"/></svg>' },
+  android: { live: false, url: "https://play.google.com/store/apps/details?id=fun.chromapath.app", top: "Get it on", name: "Google Play",
+    icon: '<svg viewBox="0 0 24 24"><path fill="#00D7FE" d="M3.6 2.3 13.4 12l-9.8 9.7c-.3-.2-.5-.6-.5-1V3.3c0-.4.2-.8.5-1z"/><path fill="#FFCE00" d="m17 8.4 3.3 1.9c1.1.6 1.1 2.7 0 3.3L17 15.6 13.4 12z"/><path fill="#FF3A44" d="M17 15.6 13.4 12l-9.8 9.7c.4.3 1 .3 1.6 0z"/><path fill="#00F076" d="M5.2 2.3c-.6-.3-1.2-.3-1.6 0l9.8 9.7L17 8.4z"/></svg>' },
+};
+const anyLive = Object.values(STORES).some(s => s.live);
+function storesHTML() {
+  const ref = new URLSearchParams(location.search).get("ref");
+  return Object.values(STORES).map(s => {
+    if (!s.live) return '<span class="store soon">' + s.icon + "<span><small>Coming soon to</small><strong>" + s.name + "</strong></span></span>";
+    const u = new URL(s.url);
+    if (ref && u.hostname.includes("play.google")) u.searchParams.set("referrer", "utm_source=" + ref);
+    return '<a class="store" href="' + u + '" target="_blank" rel="noopener">' + s.icon + "<span><small>" + s.top + "</small><strong>" + s.name + "</strong></span></a>";
+  }).join("");
+}
+document.querySelectorAll("[data-stores]").forEach(el => el.innerHTML = storesHTML());
+document.querySelectorAll("[data-store-note]").forEach(el => el.textContent = anyLive ? "Free to play. 1000 boards, growing up to 14×16." : "Coming to iPhone and Android. Free to play.");
+
+/* THE ANIMATION: a 5×5 that passes the app's STRICT rule solves itself, one
+   pair at a time, holds, fades and starts again. `s` is each pair's answer. */
+const PAINT = ["#E6194B", "#FFD400", "#00B140", "#0A6CFF", "#8A2BE2"];
+const B = { w: 5, h: 5, s: [[10,5,0,1,2,3,4,9],[18,17,22],[12,13,14,19,24,23],[21,20,15],[8,7,6,11,16]] };
+const ORDER = [0, 4, 2, 1, 3];          // the order a person might solve it in
+const LINE = 900, PAUSE = 250, HOLD = 1800, FADE = 450;
+const CYCLE = ORDER.length * (LINE + PAUSE) + HOLD + FADE;
+const svg = document.getElementById("board");
+const xy = c => [c % B.w + .5, ((c / B.w) | 0) + .5];
+svg.setAttribute("viewBox", "0 0 " + B.w + " " + B.h);
+const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+function frame(ms) {
+  let h = "";
+  // how far along each pair's line is, in squares
+  const prog = B.s.map(() => 0);
+  ORDER.forEach((p, k) => {
+    const t = (ms - k * (LINE + PAUSE)) / LINE;
+    prog[p] = Math.max(0, Math.min(1, ease(Math.max(0, Math.min(1, t))))) * (B.s[p].length - 1);
+  });
+  const filled = new Map();
+  B.s.forEach((s, p) => s.forEach((c, i) => { if (i <= prog[p] + .001 && prog[p] > 0) filled.set(c, p); }));
+  for (let c = 0; c < B.w * B.h; c++) {
+    const p = filled.get(c);
+    h += '<rect x="' + (c % B.w) + '" y="' + ((c / B.w) | 0) + '" width="1" height="1" fill="' + (p === undefined ? "#F1F3F8" : PAINT[p]) + '" fill-opacity="' + (p === undefined ? 1 : .16) + '"/>';
+  }
+  for (let i = 1; i < B.w; i++) h += '<line x1="' + i + '" y1="0" x2="' + i + '" y2="' + B.h + '" stroke="#C9CEDA" stroke-width=".02"/><line x1="0" y1="' + i + '" x2="' + B.w + '" y2="' + i + '" stroke="#C9CEDA" stroke-width=".02"/>';
+  B.s.forEach((s, p) => {
+    if (prog[p] <= 0) return;
+    const whole = Math.floor(prog[p]), part = prog[p] - whole;
+    const pts = s.slice(0, whole + 1).map(xy);
+    if (part > 0 && whole + 1 < s.length) { const [ax, ay] = xy(s[whole]), [bx, by] = xy(s[whole + 1]); pts.push([ax + (bx - ax) * part, ay + (by - ay) * part]); }
+    h += '<polyline points="' + pts.map(q => q.join(",")).join(" ") + '" fill="none" stroke="' + PAINT[p] + '" stroke-width=".5" stroke-linecap="round" stroke-linejoin="round"/>';
+  });
+  B.s.forEach((s, p) => [s[0], s[s.length - 1]].forEach(c => {
+    const [x, y] = xy(c);
+    h += '<circle cx="' + x + '" cy="' + y + '" r=".4" fill="' + PAINT[p] + '"/><text x="' + x + '" y="' + (y + .015) + '" fill="' + (p === 1 ? "#1A1A2E" : "#fff") + '" font-family="Figtree,system-ui,sans-serif" font-weight="800" font-size=".44" text-anchor="middle" dominant-baseline="central">' + (p + 1) + "</text>";
+  }));
+  svg.innerHTML = h;
+  const end = ORDER.length * (LINE + PAUSE) + HOLD;
+  svg.style.opacity = ms > end ? String(1 - (ms - end) / FADE) : "1";
+}
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) frame(ORDER.length * (LINE + PAUSE));
+else { const t0 = performance.now(); const tick = now => { frame((now - t0) % CYCLE); requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+</script>
+</body>
+</html>
