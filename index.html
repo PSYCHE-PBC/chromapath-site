@@ -24,10 +24,9 @@ a{color:inherit}
 main{max-width:460px;margin:0 auto;padding:28px 20px 24px;text-align:center}
 .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
 .brand img{width:36px;height:36px;border-radius:9px}
-h1{font-size:clamp(34px,9vw,46px);line-height:1;font-weight:900;letter-spacing:-.02em;margin:22px 0 8px}
+h1{font-size:clamp(34px,9vw,46px);line-height:1;font-weight:900;letter-spacing:-.02em;margin:22px 0 24px}
 h1 span{color:var(--red)}
-.lede{color:var(--dim);margin:0 0 24px}
-svg.board{display:block;width:100%;height:auto;border-radius:12px;margin:28px 0}
+svg.board{display:block;width:100%;height:auto;border-radius:12px;margin:28px 0 8px}
 .stores{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .store{display:flex;align-items:center;justify-content:center;gap:12px;background:#000;color:#fff;text-decoration:none;border-radius:16px;padding:12px 14px;min-height:68px;text-align:left;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)}
 .store svg{width:30px;height:30px;flex:none}
@@ -43,14 +42,10 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:24px 20px 36px;
 <main>
   <div class="brand"><img src="img/icon.png" alt="">ChromaPath</div>
   <h1>Connect the pairs.<br><span>Fill every square.</span></h1>
-  <p class="lede">Draw a line from each dot to its match. Lines can't cross, and every square gets filled. 1000 boards, growing up to 14×16.</p>
-
   <div class="stores" data-stores></div>
   <p class="note" data-store-note></p>
 
   <svg class="board" id="board" role="img" aria-label="A 5×5 ChromaPath board solving itself"></svg>
-
-  <div class="stores" data-stores></div>
 </main>
 <footer>
   <span>© 2026 Psyche Project PBC</span>
